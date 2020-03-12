@@ -186,7 +186,6 @@ boolean PubSubClient::connect(const char* id, const char* user, const char* pass
                 // instead of use CHECK_STRING_LENGTH, check with the passed length
                 // then use for loop and passed length of will message to write into buffer instead of writeString()
                 if (length+2+wmLength > MQTT_MAX_PACKET_SIZE) {_client->stop();return false;}
-                Serial.println("This ran");
                 buffer[length++] = (wmLength >> 8) & 0xFF;
                 buffer[length++] = (wmLength & 0xFF);
 
@@ -204,8 +203,6 @@ boolean PubSubClient::connect(const char* id, const char* user, const char* pass
                     length = writeString(pass,buffer,length);
                 }
             }
-
-            Serial.print("write res");Serial.println(write(MQTTCONNECT,buffer,length-MQTT_MAX_HEADER_SIZE));
 
             lastInActivity = lastOutActivity = millis();
 
