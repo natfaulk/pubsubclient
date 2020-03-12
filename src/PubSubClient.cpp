@@ -204,6 +204,8 @@ boolean PubSubClient::connect(const char* id, const char* user, const char* pass
                 }
             }
 
+            write(MQTTCONNECT,buffer,length-MQTT_MAX_HEADER_SIZE);
+
             lastInActivity = lastOutActivity = millis();
 
             while (!_client->available()) {
