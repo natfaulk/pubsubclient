@@ -23,7 +23,7 @@
 
 // MQTT_MAX_PACKET_SIZE : Maximum packet size
 #ifndef MQTT_MAX_PACKET_SIZE
-#define MQTT_MAX_PACKET_SIZE 128
+#define MQTT_MAX_PACKET_SIZE 1024
 #endif
 
 // MQTT_KEEPALIVE : keepAlive interval in Seconds
@@ -33,7 +33,7 @@
 
 // MQTT_SOCKET_TIMEOUT: socket timeout interval in Seconds
 #ifndef MQTT_SOCKET_TIMEOUT
-#define MQTT_SOCKET_TIMEOUT 15
+#define MQTT_SOCKET_TIMEOUT 30
 #endif
 
 // MQTT_MAX_TRANSFER_SIZE : limit how much data is passed to the network client
@@ -137,6 +137,7 @@ public:
    boolean connect(const char* id, const char* willTopic, uint8_t willQos, boolean willRetain, const char* willMessage);
    boolean connect(const char* id, const char* user, const char* pass, const char* willTopic, uint8_t willQos, boolean willRetain, const char* willMessage);
    boolean connect(const char* id, const char* user, const char* pass, const char* willTopic, uint8_t willQos, boolean willRetain, const char* willMessage, boolean cleanSession);
+   boolean connect(const char* id, const char* user, const char* pass, const char* willTopic, uint8_t willQos, boolean willRetain, const uint8_t* willMessage, unsigned int wmLength, boolean cleanSession);
    void disconnect();
    boolean publish(const char* topic, const char* payload);
    boolean publish(const char* topic, const char* payload, boolean retained);

@@ -119,6 +119,10 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
 }
 
 boolean PubSubClient::connect(const char *id, const char *user, const char *pass, const char* willTopic, uint8_t willQos, boolean willRetain, const char* willMessage, boolean cleanSession) {
+    return connect(id, user, pass, willTopic, willQos, willRetain, (const uint8_t*)willMessage, willMessage ? strlen(willMessage) : 0, cleanSession);
+}
+
+boolean PubSubClient::connect(const char* id, const char* user, const char* pass, const char* willTopic, uint8_t willQos, boolean willRetain, const uint8_t* willMessage, unsigned int wmLength, boolean cleanSession) {
     if (!connected()) {
         int result = 0;
 
@@ -178,8 +182,18 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
             if (willTopic) {
                 CHECK_STRING_LENGTH(length,willTopic)
                 length = writeString(willTopic,buffer,length);
-                CHECK_STRING_LENGTH(length,willMessage)
-                length = writeString(willMessage,buffer,length);
+                
+                // instead of use CHECK_STRING_LENGTH, check with the passed length
+                // then use for loop and passed length of will message to write into buffer instead of writeString()
+                if (length+2+wmLength > MQTT_MAX_PACKET_SIZE) {_client->stop();return false;}
+                Serial.println("This ran");
+                buffer[length++] = (wmLength >> 8) & 0xFF;
+                buffer[length++] = (wmLength & 0xFF);
+
+                for (unsigned int i = 0; i < wmLength; ++i) {
+                    buffer[length + i] = willMessage[i];
+                }
+                length += wmLength;
             }
 
             if(user != NULL) {
@@ -191,7 +205,7 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
                 }
             }
 
-            write(MQTTCONNECT,buffer,length-MQTT_MAX_HEADER_SIZE);
+            Serial.print("write res");Serial.println(write(MQTTCONNECT,buffer,length-MQTT_MAX_HEADER_SIZE));
 
             lastInActivity = lastOutActivity = millis();
 
